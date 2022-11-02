@@ -1,4 +1,5 @@
 import store from './store/store.js'
+import properties from '../properties.js'
 
 var LoginCompoent = Vue.createApp({
     computed:{
@@ -87,7 +88,21 @@ var LoginCompoent = Vue.createApp({
             } else {
               x.type = "password";
             }
-        }
+        },
+        toGoogleLogin(){
+            var x = screen.width/2 - 500/2;
+            var y = screen.height/2 - 600/2;
+            var rand =Math.floor(Math.random()*100000);
+            window.open(properties.websiteLoginUrl,"","left="+x+",top="+y+",width=500,height=600")
+
+
+        },
+        toLineLogin(){
+            var x = screen.width/2 - 500/2;
+            var y = screen.height/2 - 600/2;
+            var rand =Math.floor(Math.random()*100000);
+            window.open(properties.lineLoginServiceUrl,"","left="+x+",top="+y+",width=500,height=600")
+        },
 
     },
     template:`
@@ -109,8 +124,8 @@ var LoginCompoent = Vue.createApp({
             <p>或是</p>
             <div>
                 
-                <button style='background-image: url("./image/btn_google_signin_dark_pressed_web.png");background-repeat: no-repeat;background-size: contain;border: none;width: 172px;height: 40px;background-color:white; '></button>
-                <button style='background-image: url("./image/btn_login_base.png");background-repeat: no-repeat;background-size: contain;border: none;width: 150px;background-color: white;height: 40px;'></button>
+                <button @click='toGoogleLogin' style='background-image: url("./image/btn_google_signin_dark_pressed_web.png");background-repeat: no-repeat;background-size: contain;border: none;width: 172px;height: 40px;background-color:white; '></button>
+                <button @click='toLineLogin' style='background-image: url("./image/btn_login_base.png");background-repeat: no-repeat;background-size: contain;border: none;width: 150px;background-color: white;height: 40px;'></button>
             </div>
             <hr>
             <button onclick="window.open('./register.html', 'mywin','left=200,top=200,width=500,height=500,toolbar=1,resizable=0'); return false;" style='border: none;background-color: white;color: gray;'>前往註冊</button>
