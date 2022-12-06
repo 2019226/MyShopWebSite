@@ -593,7 +593,7 @@ const productInfo ={
     template:`
         <div style="display: flex;align-items: center;border: 1px solid;border-radius: 10px;margin:10px 0px;">
             <div style='width:113px;margin-right:10px;'>
-                <img style ='border:0px;border-radius:10px 0px 0px 10px;'class='productImg' :src=product.imageUrl >
+                <img style ='border:0px;border-radius:10px 0px 0px 10px;' class='productImg' :src=product.imageUrl >
             </div> 
             <div style='width:50%;'>
                 <p style='width: -webkit-fill-available;overflow: hidden; white-space: nowrap; text-overflow: ellipsis;'>{{product.name}}</p>                
@@ -702,6 +702,7 @@ const productManagePanel={
             productList:[{}],
             selectedProduct:{
             },
+            renderKey: 0,
         }
     },
     mounted(){
@@ -715,13 +716,13 @@ const productManagePanel={
             this.productManagePanelVisible[panelName]=true;
         },
         refreshProductList(){
-            this.productList=[{}];
             let comp = this;
             const oReq = new XMLHttpRequest();
             oReq.withCredentials=true;
             oReq.onreadystatechange = function() {
                 if (this.readyState == 4 && this.status == 200) {
                     comp.productList=JSON.parse(this.responseText);
+                    comp.renderKey++;
                }
             };
             oReq.open("GET", properties.backendResourceProductListUrl, true);
@@ -748,7 +749,7 @@ const productManagePanel={
             <span style='width:10%;'>庫存量</span>
             <span style='width:10%;'></span>
         </div>
-        <div style='height:500px;overflow-y:scroll;'>
+        <div style='height:500px;overflow-y:scroll;' :key="renderKey">
             <productInfo  v-for='(product) in productList'  :product=product @refreshProductList=refreshProductList @selectProduct=selectProduct @openProductPanel=openProductPanel  />
         </div>                    
         <div @click='openProductPanel("creaeProductPanel")' style='margin: 30px;padding: 5px;display: flex;align-items: center;justify-content: center;height: 50px;background-color: gray;border-radius: 10px;"'>

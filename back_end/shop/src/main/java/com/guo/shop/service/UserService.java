@@ -6,6 +6,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.PostConstruct;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -16,7 +17,21 @@ public class UserService {
     DataBaseService dataBaseService;
     @Autowired
     MyToolService myToolService;
+    @PostConstruct
+    private void createAdmin(){
+        UserModel userModel = new UserModel();
+        userModel.setEmail("admin@mywebsite");
+        userModel.setPassword("12345678");
+        userModel.setName("管理者");
+        userModel.setLoginType("webSite");
+        userModel.setId("1");
 
+        String queryHasAdminAccount = "select id from `user` where email='admin@mywebsite'";
+        List<Map<String, Object>> data = dataBaseService.query(queryHasAdminAccount);
+        if(data.size()==0){
+            createUser(userModel);
+        }
+    }
     public UserModel getUserById(String id){
         UserModel userModel =new UserModel();
          String queryUser ="select id,loginType,email,name,picture_url from `user` where id =?";

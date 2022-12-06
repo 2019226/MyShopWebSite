@@ -42,7 +42,7 @@ public class UserApi {
         session.setAttribute("loginType",userModel.getLoginType());
         session.setAttribute("picture",userModel.getPicture());
         session.setAttribute("email",userModel.getEmail());
-        if(userModel.getEmail().equals("admin@mywebsite")){
+        if(userService.isAdmin(userModel.getId())){
             needRedirect.put("redirectUrl","./backstageManagement.html");
             responseEntity = new ResponseEntity(needRedirect,HttpStatus.OK);
         }

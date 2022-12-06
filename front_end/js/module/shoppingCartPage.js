@@ -178,8 +178,15 @@ let inCartProductComponent={
     },
     methods:{
         confirmOrderProductList(){
+            if(this.inCartProductList.length==0){
+                Swal.fire({
+                    icon: 'error',
+                    text: '購物車裡面沒有商品耶...',
+                })
+            }else{
+                this.$emit('switch-panel','填寫取貨方式')
+            }
             
-            this.$emit('switch-panel','填寫取貨方式')
             
         },
 

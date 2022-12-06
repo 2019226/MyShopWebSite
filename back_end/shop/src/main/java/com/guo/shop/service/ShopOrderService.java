@@ -99,7 +99,7 @@ public class ShopOrderService {
         Date date=cal.getTime();
         DateFormat dateFormat = new SimpleDateFormat("yyyyMMdd");
         String formattedDate=dateFormat.format(date);
-        String insertOrderHistoryStatus ="INSERT INTO `shop_website`.`order_history_status` (`order_id`, `status`, `date`) VALUES (?,?,?) ";
+        String insertOrderHistoryStatus ="INSERT INTO `order_history_status` (`order_id`, `status`, `date`) VALUES (?,?,?) ";
         dataBaseService.excute(insertOrderHistoryStatus,orderId,"待處理",formattedDate);
         //跟LinePay確認使用者付款請求
         String amount = shoppingCartService.getTotalFromShoppingCart(userId);
@@ -118,11 +118,11 @@ public class ShopOrderService {
     public List<Map<String,Object>> getOrderListByStatus(String userId,String status){
         String queryOrderList ="";
         if(userService.isAdmin(userId)){
-            queryOrderList ="SELECT OL.order_id as 'id', GROUP_CONCAT(CONCAT(OL.product_name,' x ',OL.user_demand_quantity )) as 'describe', sum(OL.product_price*OL.user_demand_quantity) as 'total' FROM order_list AS OL,`order` AS O where O.order_id=OL.order_id  and O.status=? GROUP BY OL.order_id;";
+            queryOrderList ="SELECT OL.order_id as 'id', GROUP_CONCAT(OL.product_name ||  'x ' || OL.user_demand_quantity ) as 'describe', sum(OL.product_price*OL.user_demand_quantity) as 'total' FROM order_list AS OL,`order` AS O where O.order_id=OL.order_id  and O.status=? GROUP BY OL.order_id;";
             System.out.println(queryOrderList);
             return dataBaseService.query(queryOrderList,status);
         }
-        queryOrderList ="SELECT OL.order_id as 'id', GROUP_CONCAT(CONCAT(OL.product_name,' x ',OL.user_demand_quantity )) as 'describe', sum(OL.product_price*OL.user_demand_quantity) as 'total' FROM order_list AS OL,`order` AS O where O.order_id=OL.order_id and O.user_id=? and O.status=? GROUP BY OL.order_id;";
+        queryOrderList ="SELECT OL.order_id as 'id', GROUP_CONCAT(OL.product_name ||  'x ' || OL.user_demand_quantity ) as 'describe', sum(OL.product_price*OL.user_demand_quantity) as 'total' FROM order_list AS OL,`order` AS O where O.order_id=OL.order_id and O.user_id=? and O.status=? GROUP BY OL.order_id;";
         return dataBaseService.query(queryOrderList,userId,status);
 
 
@@ -137,13 +137,13 @@ public class ShopOrderService {
         DateFormat dateFormat = new SimpleDateFormat("yyyyMMdd");
         String formattedDate=dateFormat.format(date);
         String updateOrderStatus ="update `order` set `status`=? where order_id=?";
-        String insertOrderHistoryStatus ="INSERT INTO `shop_website`.`order_history_status` (`order_id`, `status`, `date`) VALUES (?,?,?) ";
+        String insertOrderHistoryStatus ="INSERT INTO `order_history_status` (`order_id`, `status`, `date`) VALUES (?,?,?) ";
         dataBaseService.excute(updateOrderStatus,status,orderId);
         dataBaseService.excute(insertOrderHistoryStatus,orderId,status,formattedDate);
         //如果是要取消訂單,則要將未完成的狀態更新為已取消
         if("取消訂單".equals(status)){
             String[] statusArray = new String[] {"待處理","賣家確認","處理商品","已送貨","完成訂單"};
-            String queryOrderHistoryInfo ="select `status`, if( DATE_FORMAT(STR_TO_DATE(`date`,'%Y%m%d'), '%Y/%m/%d')=null ,`date` ,DATE_FORMAT(STR_TO_DATE(`date`,'%Y%m%d'), '%Y/%m/%d') ) as 'date' from order_history_status where order_id=?";
+            String queryOrderHistoryInfo ="select `status`, substr(`date`, 1, 4) || '/' ||substr(`date`, 5, 2) || '/' ||substr(`date`, 7, 2) as 'date' from order_history_status where order_id=?";
             List<Map<String,Object>> orderProcessInfo= dataBaseService.query(queryOrderHistoryInfo,orderId);
             for(String item: statusArray){
                 if(isContainThisStatus(orderProcessInfo,item)){
@@ -171,7 +171,7 @@ public class ShopOrderService {
 //處理狀態
         String[] statusArray = new String[] {"待處理","賣家確認","處理商品","已送貨","完成訂單"};
         Map<String,Object> orderInfoMap =new HashMap<String,Object>();
-        String queryOrderHistoryInfo ="select `status`, if( DATE_FORMAT(STR_TO_DATE(`date`,'%Y%m%d'), '%Y/%m/%d')=null ,`date` ,DATE_FORMAT(STR_TO_DATE(`date`,'%Y%m%d'), '%Y/%m/%d') ) as 'date' from order_history_status where order_id=?";
+        String queryOrderHistoryInfo ="select `status`,  substr(`date`, 1, 4) || '/' ||substr(`date`, 5, 2) || '/' ||substr(`date`, 7, 2) as 'date' from order_history_status where order_id=?";
         List<Map<String,Object>> orderProcessInfo= dataBaseService.query(queryOrderHistoryInfo,orderId);
         boolean isFirstFound=true;
         for(String status: statusArray){
@@ -202,7 +202,7 @@ public class ShopOrderService {
     }
     public Map<String,Object> getDeliveryInfo(String orderId){
         String[] statusArray = new String[] {"待處理","賣家確認","處理商品","已送貨","完成訂單"};
-        String queryOrderHistoryInfo ="select `status`, if( DATE_FORMAT(STR_TO_DATE(`date`,'%Y%m%d'), '%Y/%m/%d')=null ,`date` ,DATE_FORMAT(STR_TO_DATE(`date`,'%Y%m%d'), '%Y/%m/%d') ) as 'date' from order_history_status where order_id=?";
+        String queryOrderHistoryInfo ="select `status`, substr(`date`, 1, 4) || '/' ||substr(`date`, 5, 2) || '/' ||substr(`date`, 7, 2) as 'date' from order_history_status where order_id=?";
         List<Map<String,Object>> orderProcessInfo= dataBaseService.query(queryOrderHistoryInfo,orderId);
         boolean isFirstFound=true;
         for(String status: statusArray){
@@ -332,8 +332,8 @@ public class ShopOrderService {
     public String getTotalById(String orderId){
 
         String queryTotalPriceSql="select sum(product_price * user_demand_quantity) as 'total' from order_list where order_id=? ";
-        Double tmp = (double) dataBaseService.query(queryTotalPriceSql,orderId).get(0).get("total");
-        String total = String.valueOf(tmp.intValue());
+
+        String total = dataBaseService.query(queryTotalPriceSql,orderId).get(0).get("total").toString();
         return  total;
     }
 

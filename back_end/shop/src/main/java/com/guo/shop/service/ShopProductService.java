@@ -85,7 +85,7 @@ public class ShopProductService {
         return true;
     }
     public List<Map<String,Object>> getProductList(String userId){
-        String queryProductListSql ="select id,name,price,`describe`,quantity,image_url,if((select demand_quantity from shopping_cart  where product_id =id and user_id=?),true,false)as 'isAddToCart'   from shop_product ";
+        String queryProductListSql ="select id,name,price,`describe`,quantity,image_url, (case when (select demand_quantity from shopping_cart  where product_id =id and user_id=?) is not null then true else false  end ) as 'isAddToCart'   from shop_product";
         JdbcTemplate jdbcTemplate= dataBaseService.getJdbcTemplate();
 
 

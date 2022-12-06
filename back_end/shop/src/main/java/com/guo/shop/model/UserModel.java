@@ -23,7 +23,6 @@ public class UserModel {
         return password;
     }
 
-    //資料庫暫時保留鹽值欄位
     //以後改用Spring Security取代掉
     public void setPassword(String password) {
         String hashPassword = DigestUtils.sha256Hex(password);
