@@ -171,7 +171,7 @@ public class ShopOrderService {
 //處理狀態
         String[] statusArray = new String[] {"待處理","賣家確認","處理商品","已送貨","完成訂單"};
         Map<String,Object> orderInfoMap =new HashMap<String,Object>();
-        String queryOrderHistoryInfo ="select `status`,  substr(`date`, 1, 4) || '/' ||substr(`date`, 5, 2) || '/' ||substr(`date`, 7, 2) as 'date' from order_history_status where order_id=?";
+        String queryOrderHistoryInfo ="select `status`,  case when `date`='已取消' then `date` else substr(`date`, 1, 4) || '/' ||substr(`date`, 5, 2) || '/' ||substr(`date`, 7, 2)  end as 'date' from order_history_status where order_id=?";
         List<Map<String,Object>> orderProcessInfo= dataBaseService.query(queryOrderHistoryInfo,orderId);
         boolean isFirstFound=true;
         for(String status: statusArray){
