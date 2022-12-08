@@ -1,0 +1,74 @@
+<form id='form2' name='form2' method='post' action='http://map.ezship.com.tw/ezship_map_web.jsp' >
+
+    <input type='text' name='suID' style='width: 0px' value=''>
+  
+    <input type='text' name='processID' style='width: 0px' value=''>
+  
+    <input type='text' name='stCate' style='width: 0px' value=''>
+  
+    <input type='text' name='stCode' style='width: 0px' value=''>
+  
+    <input type='text' name='rtURL' style='width: 0px' value='http://127.0.0.1:5500/temp/test.html'>
+  
+    <input type='text' name='webPara' style='width: 0px' value=''>
+  
+
+    <input type="submit" value="">
+  </form>
+  
+  
+  <!DOCTYPE html>
+  
+  <html xmlns="http://www.w3.org/1999/xhtml">
+  <head><meta http-equiv="Content-Type" content="text/html; charset=utf-8" ><title>
+  
+  </title></head>
+  <body>
+      <form method="post" action="./ecmap022.aspx" id="form1">
+  <div class="aspNetHidden">
+  <input type="hidden" name="__VIEWSTATE" id="__VIEWSTATE" value="/wEPDwUKLTEzNDM3NzkxOWRk/ygZY0+ABMV5XpxQJm3ynKZRPkA/OShPB8RD3PRa3H8=" >
+  </div>
+  
+  <div class="aspNetHidden">
+  
+      <input type="hidden" name="__VIEWSTATEGENERATOR" id="__VIEWSTATEGENERATOR" value="9EB98CFE" >
+  </div>
+      <div>
+      
+      </div>
+      
+  <!-- <script>document.form2.submit();</script> -->
+  <script>
+
+var strParam = "";
+            strParam += "?VDRNO=012";
+            strParam += "&ECNO=902";
+            strParam += "&ECDCNO=D11";
+            strParam += "&ECCVS=HILIFEC2C";
+            strParam += "&ECUSERIP=";
+            strParam += "&ORDERNO=";
+            strParam += "&RTURL=https://" + location.host + "/HI_Shipping/Use_API/Maps/Result.aspx";
+            strParam += "&ECTEMP=";
+            strParam += "&DEVICE=0";
+            var strUrl = "https://ecMap.hilife.com.tw/ecmap.aspx" + strParam;
+            //if (detectIE()) {
+            //    $.showModalDialog({
+            //        url: strUrl,
+            //        height: 800,
+            //        width: 1024,
+            //        resizable: true,
+            //        scrolling: 'no',
+            //        dialogArguments: 'Arguments Test',
+            //        onClose: processReturnedValue
+            //    });
+            //}
+            //else {
+            //    window.open(strUrl, "門市列表", "fullscreen,scrollbars");
+            //}
+            console.log(strUrl);
+            window.open(strUrl, "門市列表", "fullscreen,scrollbars");
+
+  </script>
+</form>
+  </body>
+  </html>

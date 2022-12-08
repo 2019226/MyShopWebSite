@@ -1,0 +1,52 @@
+            <div style='width: 0vw;height: fit-content;    '>
+                <div class='checkOrderBtn turnLeft'>
+                    <p>上一步</p>
+                </div>
+                <div class ='inCartProductContainer'>
+                    <inCartProduct/>
+                </div>
+                <div class='checkOrderBtn turnRight'>
+                    <p>結帳</p>
+                </div>
+            </div>
+            <div style='width: 0vw;height: fit-content;    '>
+                <div class='checkOrderBtn turnLeft'>
+                    <p>上一步</p>
+                </div>
+                <div class ='inCartProductContainer'>
+                    <inCartProduct/>
+                </div>
+            </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                    <div style ='width 100% ;height:10vh;' >
+                <navBar/>
+        </div>
+        <div style =' display: flex;'>
+                <div class='cartFlowContainer'  @click='sliderSwitcher($event)'>
+                    <div class ='inCartProductContainer'>
+                        <inCartProduct/>
+                    </div>
+                    <div class='turnRight'>
+                        <p>確認訂單</p>
+                    </div>
+                </div>
+        </div>
