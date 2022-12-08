@@ -45,7 +45,7 @@ public class GoogleApi {
             session.setAttribute("id",userModel.getId());
 
             HttpHeaders headers = new HttpHeaders();
-            headers.setLocation(new URL("http://127.0.0.1/loginSuccess.html").toURI());
+            headers.add("Location", "/loginSuccess.html");
             ResponseEntity responseEntity =new ResponseEntity(null,headers, HttpStatus.TEMPORARY_REDIRECT);
             return responseEntity;
         }
