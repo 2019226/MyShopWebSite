@@ -20,7 +20,7 @@ public class ShopProductService {
     MyToolService myToolService;
     @Autowired
     FileService fileService;
-    Map<String,File> cacheImageFile;
+    Map<String,File> cacheImageFile = new HashMap<String, File>();
     public boolean createProduct(ShopProductModel product){
 
 
