@@ -1,3 +1,4 @@
 *.txt
 *.properties
 *.db
+/back_end/productImage

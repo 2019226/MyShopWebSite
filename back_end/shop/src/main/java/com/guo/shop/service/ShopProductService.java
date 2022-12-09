@@ -7,7 +7,7 @@ import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
-import java.io.InputStream;
+import java.io.FileNotFoundException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.*;
@@ -20,8 +20,9 @@ public class ShopProductService {
     MyToolService myToolService;
     @Autowired
     FileService fileService;
-    Map<String,File> cacheImageFile = new HashMap<String, File>();
-    public boolean createProduct(ShopProductModel product){
+    @Autowired
+    ImageFileCacheService imageFileCacheService;
+    public boolean createProduct(ShopProductModel product) throws FileNotFoundException {
 
 
         String id = myToolService.getRandomString(10);
@@ -30,6 +31,7 @@ public class ShopProductService {
             id = myToolService.getRandomString(10);
             queryResult = dataBaseService.query("select id from shop_product where id=?",id);
         }
+        imageFileCacheService.put(id,fileService.getFileByPath(product.getImageUrl()));
         dataBaseService.excute(
                 "insert into shop_product (id,name,price,`describe`,quantity,image_url) values (?,?,?,?,?,?)",
                 id,
@@ -58,11 +60,12 @@ public class ShopProductService {
         return product;
     }
     public boolean deleteProductById(String id){
+        imageFileCacheService.del(id);
         dataBaseService.excute("delete  from shop_product where id=?",id);
         dataBaseService.excute("delete  from shopping_cart where product_id=?",id);
         return true;
     }
-    public boolean updateProductById(String id,ShopProductModel shopProduct){
+    public boolean updateProductById(String id,ShopProductModel shopProduct) throws FileNotFoundException {
         String updateSql="";
 
         if(Objects.isNull(shopProduct.getImageUrl())){
@@ -75,6 +78,7 @@ public class ShopProductService {
                     id);
             return true;
         }
+        imageFileCacheService.update(id,fileService.getFileByPath(shopProduct.getImageUrl()));
         updateSql ="update shop_product set name=?,price=?,`describe`=?,image_url=?,quantity=? where id=?";
         dataBaseService.excute(updateSql,
                 shopProduct.getName(),
@@ -137,8 +141,9 @@ public class ShopProductService {
         return shopProductList;
     }
     public File getProductImageById(String id){
-        if(cacheImageFile.get(id)!=null){
-            return    cacheImageFile.get(id);
+        File image = imageFileCacheService.get(id);
+        if(image!=null){
+            return    image;
         }
         String queryImagePath ="select image_url from shop_product where id=?";
         List<Map<String,Object>> data =dataBaseService.query(queryImagePath,id);
@@ -147,8 +152,8 @@ public class ShopProductService {
         }
         String path = data.get(0).get("image_url").toString();
         try{
-            cacheImageFile.put(id,fileService.getFileByPath(path));
-            return cacheImageFile.get(id);
+            imageFileCacheService.put(id,fileService.getFileByPath(path));
+            return imageFileCacheService.get(id);
         }catch (Exception e){
             return null;
         }
