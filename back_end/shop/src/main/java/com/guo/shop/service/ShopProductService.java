@@ -20,6 +20,7 @@ public class ShopProductService {
     MyToolService myToolService;
     @Autowired
     FileService fileService;
+    Map<String,File> cacheImageFile;
     public boolean createProduct(ShopProductModel product){
 
 
@@ -136,6 +137,9 @@ public class ShopProductService {
         return shopProductList;
     }
     public File getProductImageById(String id){
+        if(cacheImageFile.get(id)!=null){
+            return    cacheImageFile.get(id);
+        }
         String queryImagePath ="select image_url from shop_product where id=?";
         List<Map<String,Object>> data =dataBaseService.query(queryImagePath,id);
         if(data.size()==0){
@@ -143,8 +147,8 @@ public class ShopProductService {
         }
         String path = data.get(0).get("image_url").toString();
         try{
-
-            return fileService.getFileByPath(path);
+            cacheImageFile.put(id,fileService.getFileByPath(path));
+            return cacheImageFile.get(id);
         }catch (Exception e){
             return null;
         }
