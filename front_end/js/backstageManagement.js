@@ -405,10 +405,17 @@ const orderManagePanel={
 const productChangeInfoMethods={
     whenUserUploadedImageThenShowIt(evnet){
         var targetElm = evnet.target;
+        console.log(targetElm.files[0].size);
+        if(targetElm.files[0].size>1048576 ){
+            Swal.fire({
+                icon: 'error',
+                text: '檔案大小請勿超過1MB',
+            })
+            return;
+        }
         if(targetElm.files && targetElm.files[0]){
         
           var imageTagID = targetElm.getAttribute("previewImageId");
-        
           var reader = new FileReader();
           reader.onload = function (e) {
              var img = document.getElementById(imageTagID);
