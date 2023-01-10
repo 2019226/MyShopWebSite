@@ -1,5 +1,6 @@
 package com.guo.shop.controller;
 
+import com.guo.shop.model.ManifoldShopProductModel;
 import com.guo.shop.service.MyToolService;
 import com.guo.shop.service.ShoppingCartService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,7 +43,7 @@ public class ShoppingCartApi {
     @GetMapping("/shoppingCart/product")
     public ResponseEntity productInShoppingCartList(HttpSession session) throws Exception {
         shoppingCartService.setUser((String)session.getAttribute("id"));
-        List<Map<String,String>> productList= shoppingCartService.getList();
+        List<ManifoldShopProductModel> productList= shoppingCartService.getList();
         ResponseEntity responseEntity =new ResponseEntity(productList,HttpStatus.OK);
         return responseEntity;
     }

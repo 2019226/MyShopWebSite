@@ -1,5 +1,6 @@
 package com.guo.shop.service;
 
+import com.guo.shop.model.ManifoldShopProductModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
@@ -53,22 +54,22 @@ public class ShoppingCartService {
         dataBaseService.excute(sql,userId,productId);
         return true;
     }
-    public List<Map<String,String>> getList(){
+    public List<ManifoldShopProductModel> getList(){
         String sql ="select SP.id as 'product_id',SP.name as 'product_name',SP.price as 'product_price',SP.quantity as 'product_quantity',SC.demand_quantity as 'demand_quantity'  " +
                     "from shopping_cart as SC,shop_product as SP where SC.product_id = SP.id  and SC.user_id='"+userId+"'";
         System.out.println(sql);
         JdbcTemplate jdbcTemplate =dataBaseService.getJdbcTemplate();
-        List<Map<String,String>>  shopProductList= jdbcTemplate.query(sql, new RowMapper<Map<String,String>>() {
+        List<ManifoldShopProductModel>  shopProductList= jdbcTemplate.query(sql, new RowMapper<ManifoldShopProductModel>() {
             @Override
-            public Map<String,String> mapRow(ResultSet rs, int rowNum) throws SQLException {
-                Map<String,String> shoppingCartMap = new HashMap<String,String>();
-                shoppingCartMap.put("id",rs.getString("product_id"));
-                shoppingCartMap.put("name",rs.getString("product_name"));
-                shoppingCartMap.put("price",rs.getString("product_price"));
-                shoppingCartMap.put("imageUrl","/backend/shop/product/image/"+rs.getString("product_id"));
-                shoppingCartMap.put("inventoryQuantity",rs.getString("product_quantity"));
-                shoppingCartMap.put("customDemandQuantity",rs.getString("demand_quantity"));
-                return shoppingCartMap;
+            public ManifoldShopProductModel mapRow(ResultSet rs, int rowNum) throws SQLException {
+                ManifoldShopProductModel shopProductModel = new ManifoldShopProductModel();
+                shopProductModel.setId(rs.getString("product_id"));
+                shopProductModel.setName(rs.getString("product_name"));
+                shopProductModel.setPrice(rs.getString("product_price"));
+                shopProductModel.setImageUrl("/backend/shop/product/image/"+rs.getString("product_id"));
+                shopProductModel.setInventoryQuantity(rs.getString("product_quantity"));
+                shopProductModel.setCustomDemandQuantity(rs.getString("demand_quantity"));
+                return shopProductModel;
             }
         });
         return shopProductList;
