@@ -1,16 +1,14 @@
 package com.guo.shop.controller;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.guo.shop.model.LineProductModel;
-import com.guo.shop.model.ShopProductModel;
+import com.guo.shop.model.BaseShopProductModel;
+import com.guo.shop.model.ManifoldShopProductModel;
 import com.guo.shop.service.FileService;
 import com.guo.shop.service.ShopProductService;
 import com.guo.shop.service.UserService;
 import org.apache.tomcat.util.http.fileupload.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -22,12 +20,8 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 @RestController
 @RequestMapping("/backend")
@@ -47,7 +41,7 @@ public class ShopProductApi {
             ObjectMapper objectMapper = new ObjectMapper();
             HashMap<String, String> productMap = objectMapper.readValue(productInfoJson, new TypeReference<HashMap<String, String>>() {
             });
-            ShopProductModel product = new ShopProductModel();
+            BaseShopProductModel product = new BaseShopProductModel();
             product.setId(productMap.get("id"));
             product.setName(productMap.get("name"));
             product.setPrice(productMap.get("price"));
@@ -63,7 +57,7 @@ public class ShopProductApi {
     }
     @GetMapping("/shop/product/{productId}")
     public ResponseEntity getProductList(@PathVariable("productId") String id){
-        ShopProductModel product=shopProductService.getProductById(id);
+        BaseShopProductModel product=shopProductService.getProductById(id);
         ResponseEntity responseEntity;
         if(product==null){
             responseEntity = new ResponseEntity(HttpStatus.BAD_REQUEST);
@@ -74,12 +68,12 @@ public class ShopProductApi {
     }
     @GetMapping("/shop/product")
     public ResponseEntity getProductList(HttpSession session){
-        List<ShopProductModel> productList=shopProductService.getProductList();
+        List<ManifoldShopProductModel> productList=shopProductService.getProductList();
         ResponseEntity responseEntity = new ResponseEntity(productList,HttpStatus.OK);
-        String id = session.getAttribute("id")==null?null:session.getAttribute("id").toString();
-        if(id!=null){
-            List<Map<String,Object>> productListWithShoppingCartInfo=shopProductService.getProductList(id);
-            responseEntity = new ResponseEntity(productListWithShoppingCartInfo,HttpStatus.OK);
+        String userId = session.getAttribute("id")==null?null:session.getAttribute("id").toString();
+        if(userId!=null){
+            productList=shopProductService.getProductList(userId);
+            responseEntity = new ResponseEntity(productList,HttpStatus.OK);
         }
         return responseEntity;
     }
@@ -106,7 +100,7 @@ public class ShopProductApi {
             ObjectMapper objectMapper = new ObjectMapper();
             HashMap<String, String> productMap = objectMapper.readValue(productInfoJson, new TypeReference<HashMap<String, String>>() {
             });
-            ShopProductModel product = new ShopProductModel();
+            BaseShopProductModel product = new BaseShopProductModel();
             product.setId(productMap.get("id"));
             product.setName(productMap.get("name"));
             product.setPrice(productMap.get("price"));
@@ -127,7 +121,7 @@ public class ShopProductApi {
 
     }
     @GetMapping("/shop/product/image/{productId}")
-    public void getProductImage(@PathVariable("productId") String id  , HttpServletResponse response) throws IOException {
+    public void getProductImage(@PathVariable("productId") String id  ,@RequestParam String rand, HttpServletResponse response) throws IOException {
         File file = shopProductService.getProductImageById(id);
         if(file==null){
             response.setStatus(400);

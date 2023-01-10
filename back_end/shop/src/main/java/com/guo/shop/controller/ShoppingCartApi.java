@@ -1,20 +1,15 @@
 package com.guo.shop.controller;
 
-import com.guo.shop.model.ShopProductModel;
-import com.guo.shop.model.UserModel;
 import com.guo.shop.service.MyToolService;
 import com.guo.shop.service.ShoppingCartService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpSession;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 
 @RestController
 @RequestMapping("/backend")

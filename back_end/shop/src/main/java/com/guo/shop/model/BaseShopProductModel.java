@@ -1,15 +1,17 @@
 package com.guo.shop.model;
 
-public class ShopProductModel {
+import com.guo.shop.service.MyToolService;
+
+import java.util.Objects;
+
+public class BaseShopProductModel {
     String id;
     String name;
     String price;
     String describe;
     String quantity;
-
-
-
     String imageUrl;
+
 
     public String getId() {
         return id;
@@ -57,4 +59,5 @@ public class ShopProductModel {
     public void setImageUrl(String imageUrl) {
         this.imageUrl = imageUrl;
     }
+
 }
